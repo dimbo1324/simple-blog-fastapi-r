@@ -1,0 +1,23 @@
+{% extends "layout.html" %} {% block content %}
+
+<link rel="stylesheet" href="/static/css/error.css" />
+
+<div class="error-wrapper">
+  <div class="error-code">{{ status_code }}</div>
+
+  <div class="error-divider"></div>
+
+  <h1 class="error-title">
+    {% if status_code == 404 %} Page not found {% elif status_code == 403 %}
+    Access denied {% elif status_code == 500 %} Server error {% else %}
+    Something went wrong {% endif %}
+  </h1>
+
+  <p class="error-message">{{ message }}</p>
+
+  <a href="/posts" class="error-btn">
+    <span class="back-arrow">←</span> Back to posts
+  </a>
+</div>
+
+{% endblock content %}

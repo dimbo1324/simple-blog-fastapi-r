@@ -1,0 +1,94 @@
+.error-wrapper {
+    max-width: 560px;
+    margin: 4rem auto;
+    text-align: center;
+    padding: 3rem;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    animation: cardIn 0.6s ease both;
+}
+
+@keyframes cardIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.error-code {
+    font-family: "Playfair Display", serif;
+    font-size: clamp(5rem, 15vw, 9rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent-soft);
+    letter-spacing: -0.04em;
+    position: relative;
+}
+
+.error-code::after {
+    content: attr(data-code);
+    position: absolute;
+    inset: 0;
+    color: var(--accent);
+    opacity: 0.15;
+    filter: blur(12px);
+}
+
+.error-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem auto;
+    width: 60px;
+}
+
+.error-title {
+    font-family: "Playfair Display", serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 0.8rem;
+}
+
+.error-message {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 2rem;
+}
+
+.error-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent-soft);
+    padding: 0.6rem 1.4rem;
+    border-radius: 2px;
+    transition: background 0.2s, gap 0.2s;
+}
+
+.error-btn:hover {
+    background: var(--accent-soft);
+    gap: 0.8rem;
+}
+
+.back-arrow {
+    transition: transform 0.2s;
+}
+
+.error-btn:hover .back-arrow {
+    transform: translateX(-3px);
+}
