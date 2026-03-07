@@ -16,16 +16,25 @@ async def home(request: Request):
     )
 
 
+@app.get("/posts/{post_id}", include_in_schema=False)
+def post_page(request: Request, post_id: int):
+    for post in posts:
+        if post.get("id") == post_id:
+            title = post["title"][:50]
+            return templates.TemplateResponse(
+                request, "post.html", {"post": post, "title": title}
+            )
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")
+
+
 @app.get("/api/posts")
 def get_posts():
     return posts
 
 
 @app.get("/api/posts/{post_id}")
-def get_posts(post_id: int):
+def get_post(post_id: int):
     for post in posts:
         if post.get("id") == post_id:
             return post
-    # err_msg = {"error": "Post not found"}
-    # return err_msg
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Post not found")

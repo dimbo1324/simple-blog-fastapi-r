@@ -1,0 +1,48 @@
+{% extends "layout.html" %} {% block content %}
+
+<link rel="stylesheet" href="/static/css/post.css" />
+
+<div class="post-nav">
+  <a href="/posts" class="back-link">
+    <span class="back-arrow">←</span> Back to posts
+  </a>
+</div>
+
+<article class="post-wrapper">
+  <header class="post-header">
+    <div class="post-author-row">
+      <div class="author-avatar">
+        {{ post.author[0] | upper }}{{ post.author.split(' ')[1][0] | upper if
+        post.author.split(' ') | length > 1 else '' }}
+      </div>
+      <div>
+        <div class="post-author-name">{{ post.author }}</div>
+        <div class="post-date">{{ post.date_posted }}</div>
+      </div>
+    </div>
+    <h1 class="post-title">{{ post.title }}</h1>
+  </header>
+
+  <div class="post-divider"></div>
+
+  <div class="post-body">
+    <p>{{ post.content }}</p>
+  </div>
+
+  <div class="post-divider"></div>
+
+  <footer class="post-footer">
+    <span class="card-likes" onclick="toggleLike(this)">
+      <span class="like-icon">♡</span>
+      <span class="like-count">0</span>
+      <span class="like-label">Like this post</span>
+    </span>
+    <a href="/posts" class="read-more">
+      More posts <span class="read-more-arrow">→</span>
+    </a>
+  </footer>
+</article>
+
+<script src="/static/js/home.js"></script>
+
+{% endblock content %}
