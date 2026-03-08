@@ -110,7 +110,7 @@ def get_post(user_id: int, db: Annotated[Session, Depends(get_db)]):
     result = db.execute(
         select(models.User).where(models.User.id == user_id),
     )
-    user = result.scalars.first()
+    user = result.scalars().first()
     if user:
         return user
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
