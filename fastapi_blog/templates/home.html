@@ -1,12 +1,9 @@
 {% extends "layout.html" %} {% block content %}
-
 <link rel="stylesheet" href="/static/css/home.css" />
-
 <div class="section-header">
   <h2 class="section-title">Latest Posts</h2>
   <span class="section-count">{{ posts | length }} stories</span>
 </div>
-
 {% if posts %}
 <div class="posts-grid">
   {% for post in posts %}
@@ -21,10 +18,8 @@
       </div>
       <span class="card-date">{{ post.date_posted }}</span>
     </div>
-
     <h3 class="card-title">{{ post.title }}</h3>
     <p class="card-content">{{ post.content }}</p>
-
     <div class="card-footer">
       <a href="/posts/{{ post.id }}" class="read-more">
         Read more <span class="read-more-arrow">→</span>
@@ -37,14 +32,11 @@
   </article>
   {% endfor %}
 </div>
-
 {% else %}
 <div class="empty-state">
   <span class="emoji">📭</span>
   <p>No posts yet. Check back soon!</p>
 </div>
 {% endif %}
-
 <script src="/static/js/home.js"></script>
-
 {% endblock content %}
