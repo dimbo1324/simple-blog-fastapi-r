@@ -1,9 +1,9 @@
 from data import posts
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, Request, HTTPException, status
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 app = FastAPI()
