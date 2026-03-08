@@ -1,0 +1,60 @@
+{% extends "layout.html" %} {% block content %}
+
+<link rel="stylesheet" href="/static/css/create.css" />
+
+<a href="/posts" class="back-link">
+  <span class="back-arrow">←</span> Back to posts
+</a>
+
+<div class="create-wrapper">
+  <h1 class="create-title">New Post</h1>
+  <p class="create-subtitle">Share something positive with the world</p>
+
+  <div class="divider"></div>
+
+  <div id="form-error" class="form-error" style="display: none"></div>
+
+  <div class="create-form">
+    <div class="field">
+      <label class="field-label" for="user_id">User ID</label>
+      <input
+        class="field-input"
+        type="number"
+        id="user_id"
+        placeholder="Your user ID (e.g. 1)"
+        min="1"
+      />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="title">Title</label>
+      <input
+        class="field-input"
+        type="text"
+        id="title"
+        placeholder="What's your story about?"
+        maxlength="100"
+      />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="content">Content</label>
+      <textarea
+        class="field-input field-textarea"
+        id="content"
+        placeholder="Tell your story..."
+        rows="6"
+      ></textarea>
+    </div>
+
+    <div class="form-footer">
+      <a href="/posts" class="btn-cancel">Cancel</a>
+      <button class="btn-submit" onclick="submitPost()">
+        <span class="btn-text">Publish Post</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

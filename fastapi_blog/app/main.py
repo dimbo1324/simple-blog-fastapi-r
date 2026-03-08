@@ -17,7 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 # ------------------------------------------
 from database import Base, engine, get_db
 from schemas import PostCreate, PostResponse, UserCreate, UserResponse
-from app import models
+import models
 
 # ------------------------------------------
 Base.metadata.create_all(bind=engine)

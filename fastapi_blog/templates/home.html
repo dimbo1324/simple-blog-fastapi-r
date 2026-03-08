@@ -1,42 +1,60 @@
 {% extends "layout.html" %} {% block content %}
+
 <link rel="stylesheet" href="/static/css/home.css" />
+
 <div class="section-header">
   <h2 class="section-title">Latest Posts</h2>
-  <span class="section-count">{{ posts | length }} stories</span>
+  <div class="section-meta">
+    <span class="tag">{{ posts | length }} stories</span>
+  </div>
 </div>
+
 {% if posts %}
 <div class="posts-grid">
   {% for post in posts %}
   <article class="post-card">
     <div class="card-meta">
-      <div class="card-author">
-        <div class="author-avatar">
-          {{ post.author[0] | upper }}{{ post.author.split(' ')[1][0] | upper if
-          post.author.split(' ') | length > 1 else '' }}
+      <a href="/users/{{ post.user_id }}/posts" class="card-author-info">
+        <div class="avatar avatar-sm">
+          {% if post.author and post.author.image_file %}
+          <img
+            src="{{ post.author.image_path }}"
+            alt="{{ post.author.username }}"
+          />
+          {% else %} {{ post.author.username[0] | upper if post.author else '?'
+          }} {% endif %}
         </div>
-        <span class="author-name">{{ post.author }}</span>
-      </div>
-      <span class="card-date">{{ post.date_posted }}</span>
+        <span class="author-name">
+          {{ post.author.username if post.author else 'Unknown' }}
+        </span>
+      </a>
+      <span class="card-date">
+        {% if post.date_posted %} {{ post.date_posted.strftime('%b %d, %Y') if
+        post.date_posted is not string else post.date_posted }} {% endif %}
+      </span>
     </div>
+
     <h3 class="card-title">{{ post.title }}</h3>
     <p class="card-content">{{ post.content }}</p>
+
     <div class="card-footer">
       <a href="/posts/{{ post.id }}" class="read-more">
         Read more <span class="read-more-arrow">→</span>
       </a>
-      <span class="card-likes" onclick="toggleLike(this)">
-        <span class="like-icon">♡</span>
-        <span class="like-count">0</span>
-      </span>
+      <div class="card-actions">
+        <button class="card-likes" onclick="toggleLike(this)">
+          <span class="like-icon">♡</span>
+          <span class="like-count">0</span>
+        </button>
+      </div>
     </div>
   </article>
   {% endfor %}
 </div>
+
 {% else %}
 <div class="empty-state">
-  <span class="emoji">📭</span>
-  <p>No posts yet. Check back soon!</p>
+  <span class="empty-icon">📭</span>
+  <p>No posts yet. Be the first to share something positive!</p>
 </div>
-{% endif %}
-<script src="/static/js/home.js"></script>
-{% endblock content %}
+{% endif %} {% endblock content %}

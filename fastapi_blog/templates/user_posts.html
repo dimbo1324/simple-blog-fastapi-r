@@ -1,0 +1,74 @@
+{% extends "layout.html" %} {% block content %}
+
+<link rel="stylesheet" href="/static/css/home.css" />
+<link rel="stylesheet" href="/static/css/user_posts.css" />
+
+<a href="/posts" class="back-link">
+  <span class="back-arrow">←</span> All posts
+</a>
+
+<div class="profile-card">
+  <div class="avatar avatar-lg">
+    {% if user.image_file %}
+    <img src="{{ user.image_path }}" alt="{{ user.username }}" />
+    {% else %} {{ user.username[0] | upper }} {% endif %}
+  </div>
+
+  <div class="profile-info">
+    <h1 class="profile-username">{{ user.username }}</h1>
+    <p class="profile-email">{{ user.email }}</p>
+    <div class="profile-stats">
+      <div class="stat">
+        <span class="stat-value">{{ posts | length }}</span>
+        <span class="stat-label">Posts</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-header">
+  <h2 class="section-title">{{ user.username }}'s Posts</h2>
+  <span class="tag">{{ posts | length }} stories</span>
+</div>
+
+{% if posts %}
+<div class="posts-grid">
+  {% for post in posts %}
+  <article class="post-card">
+    <div class="card-meta">
+      <div class="card-author-info">
+        <div class="avatar avatar-sm">
+          {% if user.image_file %}
+          <img src="{{ user.image_path }}" alt="{{ user.username }}" />
+          {% else %} {{ user.username[0] | upper }} {% endif %}
+        </div>
+        <span class="author-name">{{ user.username }}</span>
+      </div>
+      <span class="card-date">
+        {% if post.date_posted %} {{ post.date_posted.strftime('%b %d, %Y') if
+        post.date_posted is not string else post.date_posted }} {% endif %}
+      </span>
+    </div>
+
+    <h3 class="card-title">{{ post.title }}</h3>
+    <p class="card-content">{{ post.content }}</p>
+
+    <div class="card-footer">
+      <a href="/posts/{{ post.id }}" class="read-more">
+        Read more <span class="read-more-arrow">→</span>
+      </a>
+      <button class="card-likes" onclick="toggleLike(this)">
+        <span class="like-icon">♡</span>
+        <span class="like-count">0</span>
+      </button>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="empty-state">
+  <span class="empty-icon">✍️</span>
+  <p>{{ user.username }} hasn't posted anything yet.</p>
+</div>
+{% endif %} {% endblock content %}

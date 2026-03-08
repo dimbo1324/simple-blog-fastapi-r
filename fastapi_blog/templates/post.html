@@ -1,39 +1,57 @@
 {% extends "layout.html" %} {% block content %}
+
 <link rel="stylesheet" href="/static/css/post.css" />
-<div class="post-nav">
-  <a href="/posts" class="back-link">
-    <span class="back-arrow">←</span> Back to posts
-  </a>
-</div>
-<article class="post-wrapper">
+
+<a href="/posts" class="back-link">
+  <span class="back-arrow">←</span> Back to posts
+</a>
+
+<div class="post-wrapper">
   <header class="post-header">
-    <div class="post-author-row">
-      <div class="author-avatar">
-        {{ post.author[0] | upper }}{{ post.author.split(' ')[1][0] | upper if
-        post.author.split(' ') | length > 1 else '' }}
+    <a href="/users/{{ post.user_id }}/posts" class="post-author-link">
+      <div class="avatar avatar-md">
+        {% if post.author and post.author.image_file %}
+        <img
+          src="{{ post.author.image_path }}"
+          alt="{{ post.author.username }}"
+        />
+        {% else %} {{ post.author.username[0] | upper if post.author else '?' }}
+        {% endif %}
       </div>
-      <div>
-        <div class="post-author-name">{{ post.author }}</div>
-        <div class="post-date">{{ post.date_posted }}</div>
+      <div class="post-author-info">
+        <div class="post-author-name">
+          {{ post.author.username if post.author else 'Unknown' }}
+        </div>
+        <div class="post-author-date">
+          {% if post.date_posted %} {{ post.date_posted.strftime('%B %d, %Y') if
+          post.date_posted is not string else post.date_posted }} {% endif %}
+        </div>
       </div>
-    </div>
+    </a>
+
     <h1 class="post-title">{{ post.title }}</h1>
   </header>
-  <div class="post-divider"></div>
+
+  <div class="divider"></div>
+
   <div class="post-body">
     <p>{{ post.content }}</p>
   </div>
-  <div class="post-divider"></div>
+
+  <div class="divider"></div>
+
   <footer class="post-footer">
-    <span class="card-likes" onclick="toggleLike(this)">
-      <span class="like-icon">♡</span>
-      <span class="like-count">0</span>
-      <span class="like-label">Like this post</span>
-    </span>
+    <div class="post-footer-left">
+      <button class="card-likes" onclick="toggleLike(this)">
+        <span class="like-icon">♡</span>
+        <span class="like-count">0</span>
+        <span class="like-label">Like</span>
+      </button>
+    </div>
     <a href="/posts" class="read-more">
       More posts <span class="read-more-arrow">→</span>
     </a>
   </footer>
-</article>
-<script src="/static/js/home.js"></script>
+</div>
+
 {% endblock content %}

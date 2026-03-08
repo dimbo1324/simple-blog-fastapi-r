@@ -1,42 +1,61 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
-      {% if title %} PositiveBlog — {{ title }} {% else %} PositiveBlog {% endif
-      %}
+      {% if title %}PositiveBlog — {{ title }}{% else %}PositiveBlog{% endif %}
     </title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/static/css/base.css" />
+    <script>
+      (function () {
+        var t = localStorage.getItem("theme") || "light";
+        document.documentElement.setAttribute("data-theme", t);
+      })();
+    </script>
   </head>
   <body>
     <header>
       <div class="header-inner">
         <a href="/" class="logo">
-          <span class="logo-dot"></span>
+          <span class="logo-mark">PB</span>
           PositiveBlog
         </a>
-        <nav>
-          <a href="/">Home</a>
-          <a href="/posts">Posts</a>
-          <a href="/api/posts">API</a>
+        <nav class="header-nav">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/posts" class="nav-link">Posts</a>
+          <a href="/posts/create" class="nav-link primary">+ New Post</a>
+          <button
+            class="theme-toggle"
+            onclick="toggleTheme()"
+            title="Toggle theme"
+            aria-label="Toggle theme"
+          >
+            <span class="icon-moon">🌙</span>
+            <span class="icon-sun">☀️</span>
+          </button>
         </nav>
       </div>
     </header>
+
     <div class="hero">
       <p class="hero-eyebrow">Daily Inspiration</p>
       <h1>Good things <em>happen</em><br />every day</h1>
       <p class="hero-sub">Stories worth reading, moments worth sharing.</p>
     </div>
-    <main>{% block content %} {% endblock content %}</main>
+
+    <main>{% block content %}{% endblock content %}</main>
+
     <footer>
-      <p>Made with <span>♥</span> &nbsp;·&nbsp; PositiveBlog © 2025</p>
+      <p>Made with <strong>♥</strong> &nbsp;·&nbsp; PositiveBlog © 2025</p>
     </footer>
+
+    <script src="/static/js/main.js"></script>
   </body>
 </html>
