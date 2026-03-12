@@ -17,12 +17,40 @@ async def home(request: Request, db: DBSession):
         select(models.Post).options(selectinload(models.Post.author))
     )
     posts = result.scalars().all()
-    return templates.TemplateResponse(request, "home.html", {"posts": posts, "title": "Home"})
+    return templates.TemplateResponse(
+        request, "home.html", {"posts": posts, "title": "Home"}
+    )
+
+
+@router.get("/posts/create", name="post_create")
+async def post_create(request: Request):
+    return templates.TemplateResponse(request, "create.html", {"title": "New Post"})
+
+
+@router.get("/posts/{post_id}/edit", name="post_edit")
+async def post_edit(request: Request, post_id: int, db: DBSession):
+    result = await db.execute(
+        select(models.Post)
+        .where(models.Post.id == post_id)
+        .options(selectinload(models.Post.author))
+    )
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
+    return templates.TemplateResponse(
+        request,
+        "edit.html",
+        {"post": post, "title": f"Edit — {post.title[:40]}"},
+    )
 
 
 @router.get("/posts/{post_id}")
 async def post_page(request: Request, post_id: int, db: DBSession):
-    result = await db.execute(select(models.Post).where(models.Post.id == post_id))
+    result = await db.execute(
+        select(models.Post)
+        .where(models.Post.id == post_id)
+        .options(selectinload(models.Post.author))
+    )
     post = result.scalars().first()
     if not post:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")

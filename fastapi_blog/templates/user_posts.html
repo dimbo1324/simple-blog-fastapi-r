@@ -57,10 +57,16 @@
       <a href="/posts/{{ post.id }}" class="read-more">
         Read more <span class="read-more-arrow">→</span>
       </a>
-      <button class="card-likes" onclick="toggleLike(this)">
-        <span class="like-icon">♡</span>
-        <span class="like-count">0</span>
-      </button>
+      <div class="card-actions">
+        <button class="card-likes" onclick="toggleLike(this)">
+          <span class="like-icon">♡</span>
+          <span class="like-count">0</span>
+        </button>
+        <a href="/posts/{{ post.id }}/edit" class="action-btn" title="Edit post"
+          >✎</a
+        >
+        <button class="action-btn action-btn-danger" data-post-id="{{ post.id }}" onclick="deletePost(+this.dataset.postId)" title="Delete post">
+      </div>
     </div>
   </article>
   {% endfor %}

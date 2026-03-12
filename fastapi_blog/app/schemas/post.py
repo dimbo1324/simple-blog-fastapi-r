@@ -9,7 +9,7 @@ class PostBase(BaseModel):
 
 
 class PostCreate(PostBase):
-    user_id: int
+    user_id: int | None = None
 
 
 class PostUpdate(BaseModel):
