@@ -1,0 +1,54 @@
+{% extends "layout.html" %} {% block content %}
+
+<link rel="stylesheet" href="/static/css/create.css" />
+
+<div class="auth-wrapper">
+  <h1 class="auth-title">Welcome back</h1>
+  <p class="auth-subtitle">Log in to your account to continue</p>
+
+  <div id="form-error" class="form-error" style="display: none"></div>
+
+  <div class="create-form">
+    <div class="field">
+      <label class="field-label" for="username">Username or Email</label>
+      <input
+        class="field-input"
+        type="text"
+        id="username"
+        placeholder="your_username"
+        autocomplete="username"
+        autocapitalize="none"
+      />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="password">Password</label>
+      <input
+        class="field-input"
+        type="password"
+        id="password"
+        placeholder="••••••••"
+        autocomplete="current-password"
+      />
+    </div>
+
+    <div class="form-footer" style="justify-content: flex-end">
+      <button class="btn-submit" onclick="login()" style="width: 100%">
+        <span class="btn-text">Log In</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <p class="auth-switch">
+    Don't have an account? <a href="/register">Register here</a>
+  </p>
+</div>
+
+<script>
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") login();
+  });
+</script>
+
+{% endblock content %}

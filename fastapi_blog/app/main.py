@@ -142,6 +142,49 @@ def user_posts_page(
     )
 
 
+"""
+Добавь эти три маршрута в app/main.py — вставь после маршрута user_posts_page,
+перед блоком "Auth API".
+"""
+
+# ─── Добавить в импорты (если ещё нет) ────────────────────────────────────────
+# from fastapi.responses import RedirectResponse
+
+# ─── Новые HTML-страницы (вставить после user_posts_page) ─────────────────────
+
+
+@app.get("/login", include_in_schema=False, name="login")
+def login_page(request: Request, current_user: OptionalCurrentUser):
+    """Страница логина. Если уже залогинен — редирект на главную."""
+    if current_user:
+        from fastapi.responses import RedirectResponse
+
+        return RedirectResponse("/", status_code=302)
+    return templates.TemplateResponse(request, "login.html", {"title": "Log In"})
+
+
+@app.get("/register", include_in_schema=False, name="register")
+def register_page(request: Request, current_user: OptionalCurrentUser):
+    """Страница регистрации. Если уже залогинен — редирект на главную."""
+    if current_user:
+        from fastapi.responses import RedirectResponse
+
+        return RedirectResponse("/", status_code=302)
+    return templates.TemplateResponse(
+        request, "register.html", {"title": "Create Account"}
+    )
+
+
+@app.get("/account", include_in_schema=False, name="account")
+def account_page(request: Request, current_user: CurrentUser):
+    """Страница аккаунта — требует авторизации."""
+    return templates.TemplateResponse(
+        request,
+        "account.html",
+        {"title": "My Account", "current_user": current_user},
+    )
+
+
 @app.post(
     "/api/auth/register",
     response_model=UserResponse,

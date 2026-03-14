@@ -13,6 +13,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/static/css/base.css" />
+    <link rel="stylesheet" href="/static/css/modals.css" />
     <script>
       (function () {
         var t = localStorage.getItem("theme") || "light";
@@ -27,10 +28,35 @@
           <span class="logo-mark">PB</span>
           PositiveBlog
         </a>
+
         <nav class="header-nav">
           <a href="/" class="nav-link">Home</a>
           <a href="/posts" class="nav-link">Posts</a>
+
+          {% if current_user %} {# Залогинен — показываем кнопку нового поста и
+          меню пользователя #}
           <a href="/posts/create" class="nav-link primary">+ New Post</a>
+          <div class="nav-divider"></div>
+          <a href="/account" class="nav-user" title="My Account">
+            <span class="avatar-xs">
+              {{ current_user.username[0] | upper }}
+            </span>
+            {{ current_user.username }}
+          </a>
+          <button
+            class="nav-link"
+            onclick="logout()"
+            style="background: none; border: none; cursor: pointer"
+            title="Log out"
+          >
+            Log out
+          </button>
+          {% else %} {# Гость — показываем кнопки входа и регистрации #}
+          <div class="nav-divider"></div>
+          <a href="/login" class="nav-link">Log in</a>
+          <a href="/register" class="nav-link primary">Register</a>
+          {% endif %}
+
           <button
             class="theme-toggle"
             onclick="toggleTheme()"

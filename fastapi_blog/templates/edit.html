@@ -2,15 +2,13 @@
 
 <link rel="stylesheet" href="/static/css/create.css" />
 
-<a href="/posts" class="back-link">
-  <span class="back-arrow">←</span> Back to posts
+<a href="/posts/{{ post.id }}" class="back-link">
+  <span class="back-arrow">←</span> Back to post
 </a>
 
 <div class="create-wrapper">
-  <h1 class="create-title">New Post</h1>
-  <p class="create-subtitle">
-    Writing as <strong>{{ current_user.username }}</strong>
-  </p>
+  <h1 class="create-title">Edit Post</h1>
+  <p class="create-subtitle">Update your story</p>
 
   <div class="divider"></div>
 
@@ -26,7 +24,7 @@
         class="field-input"
         type="text"
         id="title"
-        placeholder="What's your story about?"
+        value="{{ post.title }}"
         maxlength="100"
         autocomplete="off"
       />
@@ -34,18 +32,19 @@
 
     <div class="field">
       <label class="field-label" for="content">Content</label>
-      <textarea
-        class="field-input field-textarea"
-        id="content"
-        placeholder="Tell your story…"
-        rows="8"
-      ></textarea>
+      <textarea class="field-input field-textarea" id="content" rows="10">
+{{ post.content }}</textarea
+      >
     </div>
 
     <div class="form-footer">
-      <a href="/posts" class="btn-cancel">Cancel</a>
-      <button class="btn-submit" onclick="submitPost()">
-        <span class="btn-text">Publish Post</span>
+      <a href="/posts/{{ post.id }}" class="btn-cancel">Cancel</a>
+      <button
+        class="btn-submit"
+        data-post-id="{{ post.id }}"
+        onclick="updatePost(+this.dataset.postId)"
+      >
+        <span class="btn-text">Save Changes</span>
         <span class="btn-arrow">→</span>
       </button>
     </div>

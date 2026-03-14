@@ -2,9 +2,34 @@
 
 <link rel="stylesheet" href="/static/css/post.css" />
 
-<a href="/posts" class="back-link">
-  <span class="back-arrow">←</span> Back to posts
-</a>
+<div
+  style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  "
+>
+  <a href="/posts" class="back-link" style="margin-bottom: 0">
+    <span class="back-arrow">←</span> Back to posts
+  </a>
+
+  {# Кнопки управления — только для автора поста #} {% if current_user and
+  current_user.id == post.user_id %}
+  <div class="post-actions">
+    <a href="/posts/{{ post.id }}/edit" class="action-btn">✎ Edit</a>
+    <button
+      class="action-btn action-btn-danger"
+      data-post-id="{{ post.id }}"
+      onclick="deletePost(+this.dataset.postId)"
+    >
+      🗑 Delete
+    </button>
+  </div>
+  {% endif %}
+</div>
 
 <div class="post-wrapper">
   <header class="post-header">

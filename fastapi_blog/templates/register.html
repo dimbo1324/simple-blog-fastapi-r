@@ -1,0 +1,72 @@
+{% extends "layout.html" %} {% block content %}
+
+<link rel="stylesheet" href="/static/css/create.css" />
+
+<div class="auth-wrapper">
+  <h1 class="auth-title">Create account</h1>
+  <p class="auth-subtitle">Join PositiveBlog and share your stories</p>
+
+  <div id="form-error" class="form-error" style="display: none"></div>
+
+  <div class="create-form">
+    <div class="field">
+      <label class="field-label" for="username">Username</label>
+      <input
+        class="field-input"
+        type="text"
+        id="username"
+        placeholder="your_username"
+        maxlength="50"
+        autocomplete="username"
+        autocapitalize="none"
+      />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="email">Email</label>
+      <input
+        class="field-input"
+        type="email"
+        id="email"
+        placeholder="you@example.com"
+        maxlength="150"
+        autocomplete="email"
+      />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="password">Password</label>
+      <input
+        class="field-input"
+        type="password"
+        id="password"
+        placeholder="Min. 8 characters"
+        autocomplete="new-password"
+      />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="password_confirm">Confirm Password</label>
+      <input
+        class="field-input"
+        type="password"
+        id="password_confirm"
+        placeholder="Repeat your password"
+        autocomplete="new-password"
+      />
+    </div>
+
+    <div class="form-footer" style="justify-content: flex-end">
+      <button class="btn-submit" onclick="register()" style="width: 100%">
+        <span class="btn-text">Create Account</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
+  <p class="auth-switch">
+    Already have an account? <a href="/login">Log in here</a>
+  </p>
+</div>
+
+{% endblock content %}

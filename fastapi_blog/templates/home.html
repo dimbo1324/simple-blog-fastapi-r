@@ -46,6 +46,21 @@
           <span class="like-icon">♡</span>
           <span class="like-count">0</span>
         </button>
+
+        {# Кнопки редактирования и удаления — только для автора поста #} {% if
+        current_user and current_user.id == post.user_id %}
+        <a href="/posts/{{ post.id }}/edit" class="action-btn" title="Edit post"
+          >✎</a
+        >
+        <button
+          class="action-btn action-btn-danger"
+          data-post-id="{{ post.id }}"
+          onclick="deletePost(+this.dataset.postId)"
+          title="Delete post"
+        >
+          🗑
+        </button>
+        {% endif %}
       </div>
     </div>
   </article>
@@ -55,6 +70,19 @@
 {% else %}
 <div class="empty-state">
   <span class="empty-icon">📭</span>
-  <p>No posts yet. Be the first to share something positive!</p>
+  {% if current_user %}
+  <p>
+    No posts yet.
+    <a href="/posts/create" style="color: var(--accent)"
+      >Be the first to share something!</a
+    >
+  </p>
+  {% else %}
+  <p>
+    No posts yet.
+    <a href="/register" style="color: var(--accent)">Register</a> and be the
+    first to share something!
+  </p>
+  {% endif %}
 </div>
 {% endif %} {% endblock content %}

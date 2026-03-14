@@ -24,6 +24,13 @@
       </div>
     </div>
   </div>
+
+  {# Кнопка настроек — только для владельца страницы #} {% if current_user and
+  current_user.id == user.id %}
+  <a href="/account" class="action-btn" style="align-self: flex-start">
+    ⚙ Settings
+  </a>
+  {% endif %}
 </div>
 
 <div class="section-header">
@@ -57,10 +64,26 @@
       <a href="/posts/{{ post.id }}" class="read-more">
         Read more <span class="read-more-arrow">→</span>
       </a>
-      <button class="card-likes" onclick="toggleLike(this)">
-        <span class="like-icon">♡</span>
-        <span class="like-count">0</span>
-      </button>
+      <div class="card-actions">
+        <button class="card-likes" onclick="toggleLike(this)">
+          <span class="like-icon">♡</span>
+          <span class="like-count">0</span>
+        </button>
+
+        {% if current_user and current_user.id == user.id %}
+        <a href="/posts/{{ post.id }}/edit" class="action-btn" title="Edit"
+          >✎</a
+        >
+        <button
+          class="action-btn action-btn-danger"
+          data-post-id="{{ post.id }}"
+          onclick="deletePost(+this.dataset.postId)"
+          title="Delete"
+        >
+          🗑
+        </button>
+        {% endif %}
+      </div>
     </div>
   </article>
   {% endfor %}
@@ -69,6 +92,13 @@
 {% else %}
 <div class="empty-state">
   <span class="empty-icon">✍️</span>
-  <p>{{ user.username }} hasn't posted anything yet.</p>
+  <p>
+    {{ user.username }} hasn't posted anything yet. {% if current_user and
+    current_user.id == user.id %}
+    <a href="/posts/create" style="color: var(--accent)"
+      >Write your first post!</a
+    >
+    {% endif %}
+  </p>
 </div>
 {% endif %} {% endblock content %}
