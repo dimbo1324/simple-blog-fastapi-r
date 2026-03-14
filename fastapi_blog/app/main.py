@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import or_, select
@@ -11,7 +11,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from typing_extensions import Annotated
 
 import models
-from auth.dependencies import CurrentUser, OptionalCurrentUser, get_current_user
+from auth.dependencies import CurrentUser, OptionalCurrentUser
 from auth.jwt import create_access_token
 from auth.password import hash_password, verify_password
 from database import Base, engine, get_db
@@ -39,13 +39,11 @@ templates = Jinja2Templates(directory="templates")
 DBSession = Annotated[Session, Depends(get_db)]
 
 
+
+
 @app.get("/", include_in_schema=False, name="home")
 @app.get("/posts", include_in_schema=False, name="posts")
-def home(
-    request: Request,
-    db: DBSession,
-    current_user: OptionalCurrentUser,
-):
+def home(request: Request, db: DBSession, current_user: OptionalCurrentUser):
     posts = db.execute(select(models.Post)).scalars().all()
     return templates.TemplateResponse(
         request,
@@ -56,9 +54,37 @@ def home(
 
 @app.get("/posts/create", include_in_schema=False, name="post_create")
 def post_create_page(request: Request, current_user: CurrentUser):
-    """Страница создания поста — требует авторизации."""
     return templates.TemplateResponse(
-        request, "create.html", {"title": "New Post", "current_user": current_user}
+        request,
+        "create.html",
+        {"title": "New Post", "current_user": current_user},
+    )
+
+
+@app.get("/posts/{post_id}/edit", include_in_schema=False, name="post_edit")
+def post_edit_page(
+    request: Request,
+    post_id: int,
+    db: DBSession,
+    current_user: CurrentUser,
+):
+    post = (
+        db.execute(select(models.Post).where(models.Post.id == post_id))
+        .scalars()
+        .first()
+    )
+    if not post:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
+    if post.user_id != current_user.id:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Access denied")
+    return templates.TemplateResponse(
+        request,
+        "edit.html",
+        {
+            "post": post,
+            "title": f"Edit — {post.title[:40]}",
+            "current_user": current_user,
+        },
     )
 
 
@@ -80,34 +106,6 @@ def post_page(
         request,
         "post.html",
         {"post": post, "title": post.title[:50], "current_user": current_user},
-    )
-
-
-@app.get("/posts/{post_id}/edit", include_in_schema=False, name="post_edit")
-def post_edit_page(
-    request: Request,
-    post_id: int,
-    db: DBSession,
-    current_user: CurrentUser,
-):
-    """Страница редактирования — требует авторизации и владения постом."""
-    post = (
-        db.execute(select(models.Post).where(models.Post.id == post_id))
-        .scalars()
-        .first()
-    )
-    if not post:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Post not found")
-    if post.user_id != current_user.id:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Access denied")
-    return templates.TemplateResponse(
-        request,
-        "edit.html",
-        {
-            "post": post,
-            "title": f"Edit — {post.title[:40]}",
-            "current_user": current_user,
-        },
     )
 
 
@@ -142,47 +140,37 @@ def user_posts_page(
     )
 
 
-"""
-Добавь эти три маршрута в app/main.py — вставь после маршрута user_posts_page,
-перед блоком "Auth API".
-"""
-
-# ─── Добавить в импорты (если ещё нет) ────────────────────────────────────────
-# from fastapi.responses import RedirectResponse
-
-# ─── Новые HTML-страницы (вставить после user_posts_page) ─────────────────────
-
-
 @app.get("/login", include_in_schema=False, name="login")
 def login_page(request: Request, current_user: OptionalCurrentUser):
-    """Страница логина. Если уже залогинен — редирект на главную."""
     if current_user:
-        from fastapi.responses import RedirectResponse
-
         return RedirectResponse("/", status_code=302)
-    return templates.TemplateResponse(request, "login.html", {"title": "Log In"})
+    return templates.TemplateResponse(
+        request,
+        "login.html",
+        {"title": "Log In", "current_user": None},
+    )
 
 
 @app.get("/register", include_in_schema=False, name="register")
 def register_page(request: Request, current_user: OptionalCurrentUser):
-    """Страница регистрации. Если уже залогинен — редирект на главную."""
     if current_user:
-        from fastapi.responses import RedirectResponse
-
         return RedirectResponse("/", status_code=302)
     return templates.TemplateResponse(
-        request, "register.html", {"title": "Create Account"}
+        request,
+        "register.html",
+        {"title": "Create Account", "current_user": None},
     )
 
 
 @app.get("/account", include_in_schema=False, name="account")
 def account_page(request: Request, current_user: CurrentUser):
-    """Страница аккаунта — требует авторизации."""
     return templates.TemplateResponse(
         request,
         "account.html",
         {"title": "My Account", "current_user": current_user},
     )
+
+
 
 
 @app.post(
@@ -231,12 +219,6 @@ def register(user_in: UserRegister, db: DBSession):
     summary="Войти и получить JWT-токен",
 )
 def login(credentials: UserLogin, response: Response, db: DBSession):
-    """
-    Принимает username (или email) + пароль.
-    Возвращает JWT в теле ответа И устанавливает httpOnly cookie —
-    это позволяет использовать токен как с JS-клиентом (fetch), так и
-    со страницами браузера без дополнительной логики.
-    """
     user = (
         db.execute(
             select(models.User).where(
@@ -296,11 +278,9 @@ def me(current_user: CurrentUser):
     return current_user
 
 
-@app.get(
-    "/api/users/{user_id}",
-    response_model=UserResponse,
-    tags=["Users"],
-)
+
+
+@app.get("/api/users/{user_id}", response_model=UserResponse, tags=["Users"])
 def get_user(user_id: int, db: DBSession):
     user = (
         db.execute(select(models.User).where(models.User.id == user_id))
@@ -318,33 +298,27 @@ def get_user(user_id: int, db: DBSession):
     tags=["Users"],
     summary="Обновить свой профиль",
 )
-def update_me(
-    user_update: UserUpdate,
-    db: DBSession,
-    current_user: CurrentUser,
-):
+def update_me(user_update: UserUpdate, db: DBSession, current_user: CurrentUser):
     if user_update.username and user_update.username != current_user.username:
-        taken = (
+        if (
             db.execute(
                 select(models.User).where(models.User.username == user_update.username)
             )
             .scalars()
             .first()
-        )
-        if taken:
+        ):
             raise HTTPException(
                 status.HTTP_400_BAD_REQUEST, detail="Username already taken."
             )
 
     if user_update.email and user_update.email != current_user.email:
-        taken = (
+        if (
             db.execute(
                 select(models.User).where(models.User.email == user_update.email)
             )
             .scalars()
             .first()
-        )
-        if taken:
+        ):
             raise HTTPException(
                 status.HTTP_400_BAD_REQUEST, detail="Email already registered."
             )
@@ -363,11 +337,7 @@ def update_me(
     tags=["Users"],
     summary="Сменить пароль",
 )
-def change_password(
-    data: UserUpdatePassword,
-    db: DBSession,
-    current_user: CurrentUser,
-):
+def change_password(data: UserUpdatePassword, db: DBSession, current_user: CurrentUser):
     if not verify_password(data.current_password, current_user.hashed_password):
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect."
@@ -382,11 +352,7 @@ def change_password(
     tags=["Users"],
     summary="Удалить свой аккаунт",
 )
-def delete_me(
-    response: Response,
-    db: DBSession,
-    current_user: CurrentUser,
-):
+def delete_me(response: Response, db: DBSession, current_user: CurrentUser):
     db.delete(current_user)
     db.commit()
     response.delete_cookie("access_token")
@@ -398,18 +364,19 @@ def delete_me(
     tags=["Users"],
 )
 def get_user_posts(user_id: int, db: DBSession):
-    user = (
-        db.execute(select(models.User).where(models.User.id == user_id))
+    if (
+        not db.execute(select(models.User).where(models.User.id == user_id))
         .scalars()
         .first()
-    )
-    if not user:
+    ):
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="User not found")
     return (
         db.execute(select(models.Post).where(models.Post.user_id == user_id))
         .scalars()
         .all()
     )
+
+
 
 
 @app.get("/api/posts", response_model=List[PostResponse], tags=["Posts"])
@@ -423,11 +390,7 @@ def get_posts(db: DBSession):
     status_code=status.HTTP_201_CREATED,
     tags=["Posts"],
 )
-def create_post(
-    post_in: PostCreate,
-    db: DBSession,
-    current_user: CurrentUser,
-):
+def create_post(post_in: PostCreate, db: DBSession, current_user: CurrentUser):
     new_post = models.Post(
         title=post_in.title,
         content=post_in.content,
@@ -451,11 +414,7 @@ def get_post(post_id: int, db: DBSession):
     return post
 
 
-@app.patch(
-    "/api/posts/{post_id}",
-    response_model=PostResponse,
-    tags=["Posts"],
-)
+@app.patch("/api/posts/{post_id}", response_model=PostResponse, tags=["Posts"])
 def update_post(
     post_id: int,
     post_data: PostUpdate,
@@ -473,10 +432,8 @@ def update_post(
         raise HTTPException(
             status.HTTP_403_FORBIDDEN, detail="You can only edit your own posts."
         )
-
     for field, value in post_data.model_dump(exclude_unset=True).items():
         setattr(post, field, value)
-
     db.commit()
     db.refresh(post)
     return post
@@ -487,11 +444,7 @@ def update_post(
     status_code=status.HTTP_204_NO_CONTENT,
     tags=["Posts"],
 )
-def delete_post(
-    post_id: int,
-    db: DBSession,
-    current_user: CurrentUser,
-):
+def delete_post(post_id: int, db: DBSession, current_user: CurrentUser):
     post = (
         db.execute(select(models.Post).where(models.Post.id == post_id))
         .scalars()
@@ -503,9 +456,10 @@ def delete_post(
         raise HTTPException(
             status.HTTP_403_FORBIDDEN, detail="You can only delete your own posts."
         )
-
     db.delete(post)
     db.commit()
+
+
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -514,11 +468,19 @@ def http_exception_handler(request: Request, exc: StarletteHTTPException):
         exc.detail or "An error occurred. Please check your request and try again."
     )
     if request.url.path.startswith("/api"):
-        return JSONResponse(status_code=exc.status_code, content={"detail": message})
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": message},
+        )
     return templates.TemplateResponse(
         request,
         "error.html",
-        {"status_code": exc.status_code, "title": exc.status_code, "message": message},
+        {
+            "status_code": exc.status_code,
+            "title": exc.status_code,
+            "message": message,
+            "current_user": None,
+        },
         status_code=exc.status_code,
     )
 
@@ -535,6 +497,7 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
             "status_code": code,
             "title": code,
             "message": "Invalid request. Please check your input and try again.",
+            "current_user": None,
         },
         status_code=code,
     )
