@@ -1,8 +1,4 @@
-<<<<<<< HEAD:fastapi_blog/app/schemas/user.py
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
-=======
 from datetime import datetime
->>>>>>> 79bbcc7 (addaed auth logic):fastapi_blog/app/schemas.py
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
@@ -42,8 +38,6 @@ class UserUpdate(BaseModel):
     username: str | None = Field(default=None, min_length=1, max_length=50)
     email: EmailStr | None = Field(default=None, max_length=150)
     image_file: str | None = Field(default=None, min_length=1, max_length=200)
-<<<<<<< HEAD:fastapi_blog/app/schemas/user.py
-=======
 
 
 class UserUpdatePassword(BaseModel):
@@ -78,4 +72,3 @@ class PostResponse(PostBase):
     id: int
     date_posted: datetime
     author: UserResponse
->>>>>>> 79bbcc7 (addaed auth logic):fastapi_blog/app/schemas.py

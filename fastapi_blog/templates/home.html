@@ -46,15 +46,6 @@
           <span class="like-icon">♡</span>
           <span class="like-count">0</span>
         </button>
-        <a href="/posts/{{ post.id }}/edit" class="action-btn" title="Edit post"
-          >✎</a
-        >
-        <button
-          data-post-id="{{ post.id }}"
-          onclick="deletePost(+this.dataset.postId)"
-        >
-          🗑
-        </button>
       </div>
     </div>
   </article>
@@ -64,11 +55,6 @@
 {% else %}
 <div class="empty-state">
   <span class="empty-icon">📭</span>
-  <p>
-    No posts yet.
-    <a href="/posts/create" style="color: var(--accent)"
-      >Be the first to share something!</a
-    >
-  </p>
+  <p>No posts yet. Be the first to share something positive!</p>
 </div>
 {% endif %} {% endblock content %}

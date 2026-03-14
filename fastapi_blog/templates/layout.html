@@ -13,7 +13,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/static/css/base.css" />
-    <link rel="stylesheet" href="/static/css/modals.css" />
     <script>
       (function () {
         var t = localStorage.getItem("theme") || "light";
@@ -31,10 +30,7 @@
         <nav class="header-nav">
           <a href="/" class="nav-link">Home</a>
           <a href="/posts" class="nav-link">Posts</a>
-          <a href="/posts/create" class="nav-link">+ New Post</a>
-          <div class="nav-divider"></div>
-          <a href="#" class="nav-link nav-link-auth">Log in</a>
-          <a href="#" class="nav-link nav-link-auth primary">Register</a>
+          <a href="/posts/create" class="nav-link primary">+ New Post</a>
           <button
             class="theme-toggle"
             onclick="toggleTheme()"
@@ -47,15 +43,19 @@
         </nav>
       </div>
     </header>
+
     <div class="hero">
       <p class="hero-eyebrow">Daily Inspiration</p>
       <h1>Good things <em>happen</em><br />every day</h1>
       <p class="hero-sub">Stories worth reading, moments worth sharing.</p>
     </div>
+
     <main>{% block content %}{% endblock content %}</main>
+
     <footer>
       <p>Made with <strong>♥</strong> &nbsp;·&nbsp; PositiveBlog © 2025</p>
     </footer>
+
     <script src="/static/js/main.js"></script>
   </body>
 </html>

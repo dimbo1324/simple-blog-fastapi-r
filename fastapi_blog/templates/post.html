@@ -2,24 +2,9 @@
 
 <link rel="stylesheet" href="/static/css/post.css" />
 
-<div
-  style="
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  "
->
-  <a href="/posts" class="back-link" style="margin-bottom: 0">
-    <span class="back-arrow">←</span> Back to posts
-  </a>
-  <div class="post-actions">
-    <a href="/posts/{{ post.id }}/edit" class="action-btn">✎ Edit</a>
-    <button class="action-btn action-btn-danger" data-post-id="{{ post.id }}" onclick="deletePost(+this.dataset.postId)">
-  </div>
-</div>
+<a href="/posts" class="back-link">
+  <span class="back-arrow">←</span> Back to posts
+</a>
 
 <div class="post-wrapper">
   <header class="post-header">
